@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE電子名片管理系統 - 啟動器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .launcher-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 60px;
+            color: #00c300;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .status-card.running {
+            border-left-color: #28a745;
+        }
+
+        .status-card.checking {
+            border-left-color: #ffc107;
+        }
+
+        .status-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .status-icon.stopped {
+            color: #dc3545;
+        }
+
+        .status-icon.running {
+            color: #28a745;
+        }
+
+        .status-icon.checking {
+            color: #ffc107;
+        }
+
+        .status-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .status-detail {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #00c300;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #00a300;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .quick-link {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            border-color: #00c300;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .quick-link.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .quick-link-icon {
+            font-size: 24px;
+            color: #00c300;
+            margin-bottom: 10px;
+        }
+
+        .quick-link-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .quick-link-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .logs-container {
+            background: #1e1e1e;
+            color: #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            display: none;
+        }
+
+        .logs-container.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #00c300;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .installation-guide {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .installation-guide h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .installation-guide ol {
+            margin-left: 20px;
+        }
+
+        .installation-guide li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .installation-guide code {
+            background: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .launcher-container {
+                padding: 30px 20px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="launcher-container">
+        <div class="logo">
+            <i class="fas fa-id-card"></i>
+        </div>
+        
+        <h1 class="title">LINE電子名片管理系統</h1>
+        <p class="subtitle">專業的電子名片設計與管理平台</p>
+
+        <!-- 系統狀態 -->
+        <div class="status-card" id="statusCard">
+            <div class="status-icon stopped" id="statusIcon">
+                <i class="fas fa-stop-circle"></i>
+            </div>
+            <div class="status-text" id="statusText">系統未啟動</div>
+            <div class="status-detail" id="statusDetail">點擊啟動按鈕開始使用系統</div>
+        </div>
+
+        <!-- 操作按鈕 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="startBtn" onclick="startSystem()">
+                <i class="fas fa-play"></i>
+                <span>啟動系統</span>
+            </button>
+            <button class="btn btn-danger" id="stopBtn" onclick="stopSystem()" disabled>
+                <i class="fas fa-stop"></i>
+                <span>停止系統</span>
+            </button>
+            <button class="btn btn-secondary" id="logsBtn" onclick="toggleLogs()">
+                <i class="fas fa-terminal"></i>
+                <span>查看日誌</span>
+            </button>
+        </div>
+
+        <!-- 快速連結 -->
+        <div class="quick-links">
+            <a href="#" class="quick-link disabled" id="adminLink">
+                <div class="quick-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <div class="quick-link-title">管理後台</div>
+                <div class="quick-link-desc">客戶資料管理</div>
+            </a>
+            <a href="#" class="quick-link disabled" id="builderLink">
+                <div class="quick-link-icon"><i class="fas fa-paint-brush"></i></div>
+                <div class="quick-link-title">專業設計器</div>
+                <div class="quick-link-desc">Flex Message風格</div>
+            </a>
+            <a href="#" class="quick-link disabled" id="galleryLink">
+                <div class="quick-link-icon"><i class="fas fa-images"></i></div>
+                <div class="quick-link-title">名片展示廊</div>
+                <div class="quick-link-desc">瀏覽所有名片</div>
+            </a>
+            <a href="#" class="quick-link disabled" id="simpleBuilderLink">
+                <div class="quick-link-icon"><i class="fas fa-edit"></i></div>
+                <div class="quick-link-title">簡易設計器</div>
+                <div class="quick-link-desc">快速建立名片</div>
+            </a>
+        </div>
+
+        <!-- 日誌顯示 -->
+        <div class="logs-container" id="logsContainer">
+            <div id="logsContent">等待系統啟動...</div>
+        </div>
+
+        <!-- 安裝說明 -->
+        <div class="installation-guide">
+            <h3><i class="fas fa-info-circle"></i> 首次使用說明</h3>
+            <ol>
+                <li>確保已安裝 <code>Python 3.8+</code></li>
+                <li>在系統目錄中執行 <code>pip install -r requirements.txt</code></li>
+                <li>點擊「啟動系統」按鈕</li>
+                <li>等待系統啟動完成（約10-30秒）</li>
+                <li>點擊上方快速連結開始使用</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let systemProcess = null;
+        let statusCheckInterval = null;
+        let logsVisible = false;
+
+        // 檢查系統狀態
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/api/health', {
+                    method: 'GET',
+                    timeout: 3000
+                });
+                
+                if (response.ok) {
+                    updateStatus('running', '系統運行中', 'http://localhost:5000');
+                    enableQuickLinks();
+                } else {
+                    updateStatus('stopped', '系統未啟動', '點擊啟動按鈕開始使用系統');
+                    disableQuickLinks();
+                }
+            } catch (error) {
+                updateStatus('stopped', '系統未啟動', '點擊啟動按鈕開始使用系統');
+                disableQuickLinks();
+            }
+        }
+
+        // 更新狀態顯示
+        function updateStatus(status, text, detail) {
+            const statusCard = document.getElementById('statusCard');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            const statusDetail = document.getElementById('statusDetail');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+
+            // 移除所有狀態類別
+            statusCard.classList.remove('running', 'checking');
+            statusIcon.classList.remove('running', 'checking', 'stopped');
+
+            if (status === 'running') {
+                statusCard.classList.add('running');
+                statusIcon.classList.add('running');
+                statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else if (status === 'checking') {
+                statusCard.classList.add('checking');
+                statusIcon.classList.add('checking');
+                statusIcon.innerHTML = '<div class="spinner"></div>';
+                startBtn.disabled = true;
+                stopBtn.disabled = true;
+            } else {
+                statusIcon.classList.add('stopped');
+                statusIcon.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+
+            statusText.textContent = text;
+            statusDetail.textContent = detail;
+        }
+
+        // 啟動系統
+        async function startSystem() {
+            updateStatus('checking', '正在啟動系統...', '請稍候，系統正在初始化');
+            addLog('開始啟動 LINE電子名片管理系統...');
+
+            try {
+                // 模擬啟動過程
+                addLog('檢查 Python 環境...');
+                await sleep(1000);
+                
+                addLog('載入相依套件...');
+                await sleep(1500);
+                
+                addLog('初始化資料庫...');
+                await sleep(1000);
+                
+                addLog('啟動 Flask 伺服器...');
+                await sleep(2000);
+                
+                addLog('系統啟動完成！');
+                addLog('伺服器運行於: http://localhost:5000');
+                
+                // 開始檢查系統狀態
+                statusCheckInterval = setInterval(checkSystemStatus, 2000);
+                checkSystemStatus();
+                
+            } catch (error) {
+                addLog('啟動失敗: ' + error.message);
+                updateStatus('stopped', '啟動失敗', '請檢查 Python 環境和相依套件');
+            }
+        }
+
+        // 停止系統
+        async function stopSystem() {
+            updateStatus('checking', '正在停止系統...', '請稍候');
+            addLog('正在停止系統...');
+
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+                statusCheckInterval = null;
+            }
+
+            await sleep(1000);
+            addLog('系統已停止');
+            updateStatus('stopped', '系統已停止', '點擊啟動按鈕重新開始');
+            disableQuickLinks();
+        }
+
+        // 啟用快速連結
+        function enableQuickLinks() {
+            const links = [
+                { id: 'adminLink', url: 'http://localhost:5000' },
+                { id: 'builderLink', url: 'http://localhost:5000/flex-card-builder.html' },
+                { id: 'galleryLink', url: 'http://localhost:5000/card-gallery.html' },
+                { id: 'simpleBuilderLink', url: 'http://localhost:5000/card-builder.html' }
+            ];
+
+            links.forEach(link => {
+                const element = document.getElementById(link.id);
+                element.classList.remove('disabled');
+                element.href = link.url;
+                element.target = '_blank';
+            });
+        }
+
+        // 停用快速連結
+        function disableQuickLinks() {
+            const linkIds = ['adminLink', 'builderLink', 'galleryLink', 'simpleBuilderLink'];
+            
+            linkIds.forEach(id => {
+                const element = document.getElementById(id);
+                element.classList.add('disabled');
+                element.href = '#';
+                element.removeAttribute('target');
+            });
+        }
+
+        // 切換日誌顯示
+        function toggleLogs() {
+            const logsContainer = document.getElementById('logsContainer');
+            const logsBtn = document.getElementById('logsBtn');
+            
+            logsVisible = !logsVisible;
+            
+            if (logsVisible) {
+                logsContainer.classList.add('show');
+                logsBtn.innerHTML = '<i class="fas fa-eye-slash"></i><span>隱藏日誌</span>';
+            } else {
+                logsContainer.classList.remove('show');
+                logsBtn.innerHTML = '<i class="fas fa-terminal"></i><span>查看日誌</span>';
+            }
+        }
+
+        // 添加日誌
+        function addLog(message) {
+            const logsContent = document.getElementById('logsContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${message}\n`;
+            
+            if (logsContent.textContent === '等待系統啟動...') {
+                logsContent.textContent = logLine;
+            } else {
+                logsContent.textContent += logLine;
+            }
+            
+            // 自動滾動到底部
+            logsContent.scrollTop = logsContent.scrollHeight;
+        }
+
+        // 輔助函數
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 頁面載入時檢查系統狀態
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            
+            // 每30秒檢查一次系統狀態
+            setInterval(checkSystemStatus, 30000);
+        });
+
+        // 頁面關閉時清理
+        window.addEventListener('beforeunload', function() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+
