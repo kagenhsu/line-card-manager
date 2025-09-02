@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>頁首主選單設計 - LINE電子名片系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 主頁首設計 */
+        .main-header {
+            background: linear-gradient(135deg, #00c300 0%, #00a000 100%);
+            color: white;
+            box-shadow: 0 2px 20px rgba(0, 195, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        /* 品牌標識區域 */
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00c300;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-info h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .brand-info .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* 主導航選單 */
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link i {
+            font-size: 16px;
+        }
+
+        /* 用戶操作區域 */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: white;
+            color: #00c300;
+            border: 1px solid white;
+        }
+
+        .action-btn.primary:hover {
+            background: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 狀態指示器 */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* 手機版選單 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #00c300;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-nav-item {
+            display: block;
+            padding: 16px 20px;
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .mobile-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav-item i {
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .header-content {
+                height: 60px;
+            }
+
+            .brand-info h1 {
+                font-size: 18px;
+            }
+
+            .brand-info .subtitle {
+                display: none;
+            }
+
+            .main-nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .user-actions {
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .status-indicator {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-logo {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+
+            .brand-info h1 {
+                font-size: 16px;
+            }
+
+            .user-actions .action-btn:not(.primary) {
+                display: none;
+            }
+        }
+
+        /* 內容區域樣式 */
+        .content-area {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #00c300;
+        }
+
+        .feature-card h3 {
+            color: #00c300;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主頁首 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="header-content">
+                <!-- 品牌標識區域 -->
+                <div class="brand-section">
+                    <div class="brand-logo">
+                        <i class="fab fa-line"></i>
+                    </div>
+                    <div class="brand-info">
+                        <h1>LINE電子名片系統</h1>
+                        <div class="subtitle">專業名片管理平台</div>
+                    </div>
+                </div>
+
+                <!-- 主導航選單 -->
+                <nav class="main-nav">
+                    <div class="nav-item">
+                        <a href="/" class="nav-link active">
+                            <i class="fas fa-home"></i>
+                            <span>管理後台</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/flex-card-builder-v2.html" class="nav-link">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>專業設計器</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/card-gallery.html" class="nav-link">
+                            <i class="fas fa-images"></i>
+                            <span>名片展示廊</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="/card-import.html" class="nav-link">
+                            <i class="fas fa-upload"></i>
+                            <span>名片匯入</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- 用戶操作區域 -->
+                <div class="user-actions">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>系統正常</span>
+                    </div>
+                    <a href="#" class="action-btn">
+                        <i class="fas fa-cog"></i>
+                        <span>設定</span>
+                    </a>
+                    <a href="#" class="action-btn primary">
+                        <i class="fas fa-plus"></i>
+                        <span>新增名片</span>
+                    </a>
+                </div>
+
+                <!-- 手機版選單按鈕 -->
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- 手機版導航選單 -->
+            <nav class="mobile-nav" id="mobileNav">
+                <a href="/" class="mobile-nav-item">
+                    <i class="fas fa-home"></i>
+                    管理後台
+                </a>
+                <a href="/flex-card-builder-v2.html" class="mobile-nav-item">
+                    <i class="fas fa-paint-brush"></i>
+                    專業設計器
+                </a>
+                <a href="/card-gallery.html" class="mobile-nav-item">
+                    <i class="fas fa-images"></i>
+                    名片展示廊
+                </a>
+                <a href="/card-import.html" class="mobile-nav-item">
+                    <i class="fas fa-upload"></i>
+                    名片匯入
+                </a>
+                <a href="#" class="mobile-nav-item">
+                    <i class="fas fa-cog"></i>
+                    系統設定
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 內容區域 -->
+    <div class="content-area">
+        <div class="demo-section">
+            <h2>🎨 頁首主選單設計特色</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-palette"></i> 專業視覺設計</h3>
+                    <p>LINE品牌綠色漸層背景，現代化的設計風格，提升品牌形象和用戶體驗。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-mobile-alt"></i> 響應式設計</h3>
+                    <p>完美適配桌面、平板、手機等各種裝置，手機版提供摺疊式選單。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-mouse-pointer"></i> 互動體驗</h3>
+                    <p>流暢的hover效果、動畫過渡，提供直觀的視覺回饋和操作體驗。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-route"></i> 清晰導航</h3>
+                    <p>邏輯清晰的選單結構，當前頁面高亮顯示，用戶可輕鬆找到所需功能。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>🚀 功能區域說明</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-trademark"></i> 品牌標識區</h3>
+                    <p>包含LINE圖示、系統名稱和副標題，建立專業的品牌識別。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-compass"></i> 主導航選單</h3>
+                    <p>四大核心功能：管理後台、專業設計器、名片展示廊、名片匯入。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-user-cog"></i> 用戶操作區</h3>
+                    <p>系統狀態指示、設定按鈕、快速新增名片等常用操作。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-bars"></i> 手機版選單</h3>
+                    <p>摺疊式設計，節省螢幕空間，觸控友善的操作體驗。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>💡 設計亮點</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-magic"></i> 動畫效果</h3>
+                    <p>微妙的hover動畫、狀態指示器脈衝效果、選單滑動動畫。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-shield-alt"></i> 固定頂部</h3>
+                    <p>sticky定位，始終顯示在頁面頂部，方便用戶隨時切換功能。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-eye"></i> 視覺層次</h3>
+                    <p>清晰的視覺層次，重要功能突出顯示，次要功能適度弱化。</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-universal-access"></i> 無障礙設計</h3>
+                    <p>符合無障礙設計標準，支援鍵盤導航和螢幕閱讀器。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 手機版選單切換
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('show');
+        }
+
+        // 點擊外部關閉手機版選單
+        document.addEventListener('click', function(e) {
+            const mobileNav = document.getElementById('mobileNav');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileNav.classList.remove('show');
+            }
+        });
+
+        // 導航連結點擊效果
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 移除所有active類別
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                // 為當前連結添加active類別
+                this.classList.add('active');
+            });
+        });
+
+        // 模擬系統狀態更新
+        setInterval(() => {
+            const statusDot = document.querySelector('.status-dot');
+            const colors = ['#4CAF50', '#2196F3', '#FF9800'];
+            const currentColor = statusDot.style.backgroundColor;
+            const nextColor = colors[Math.floor(Math.random() * colors.length)];
+            statusDot.style.backgroundColor = nextColor;
+        }, 5000);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名片展示廊 - LINE電子名片系統</title>
+    <link rel="stylesheet" href="common-header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .icon {
+            font-size: 40px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .card-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .card-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-preview {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .contact-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 14px;
+            color: white;
+        }
+
+        .phone-icon { background: #27ae60; }
+        .email-icon { background: #3498db; }
+        .website-icon { background: #e67e22; }
+        .facebook-icon { background: #3b5998; }
+        .map-icon { background: #e74c3c; }
+
+        .contact-info h4 {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .card-actions {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+        .card-stats {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .empty-state .icon {
+            font-size: 80px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .fab {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 統一頁首導航 -->
+    <nav class="main-navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-id-card"></i>
+                LINE電子名片系統
+            </a>
+            
+            <ul class="navbar-menu" id="navbarMenu">
+                <li class="navbar-item">
+                    <a href="/" class="navbar-link">
+                        <i class="fas fa-home"></i> 管理後台
+                    </a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/flex-card-builder-v2.html" class="navbar-link">
+                        <i class="fas fa-paint-brush"></i> 專業設計器
+                    </a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/card-gallery.html" class="navbar-link active">
+                        <i class="fas fa-images"></i> 名片展示廊
+                    </a>
+                </li>
+                <li class="navbar-item">
+                    <a href="/card-import.html" class="navbar-link">
+                        <i class="fas fa-file-import"></i> 名片匯入
+                    </a>
+                </li>
+            </ul>
+            
+            <button class="navbar-toggle" id="navbarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-images"></i> 名片展示廊</h1>
+            <p>瀏覽所有已上架的電子名片</p>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-id-card"></i></div>
+                <div class="number" id="totalCards">0</div>
+                <div class="label">總名片數</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-eye"></i></div>
+                <div class="number" id="totalViews">0</div>
+                <div class="label">總瀏覽次數</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-calendar-day"></i></div>
+                <div class="number" id="todayCards">0</div>
+                <div class="label">今日新增</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-fire"></i></div>
+                <div class="number" id="popularCards">0</div>
+                <div class="label">熱門名片</div>
+            </div>
+        </div>
+
+        <div class="loading" id="loadingState">
+            <div class="spinner"></div>
+            <p>載入名片中...</p>
+        </div>
+
+        <div class="gallery" id="cardGallery" style="display: none;">
+            <!-- 名片將在這裡動態載入 -->
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="icon"><i class="fas fa-id-card"></i></div>
+            <h3>還沒有任何名片</h3>
+            <p>開始建立您的第一張電子名片吧！</p>
+            <a href="flex-card-builder-v2.html" class="btn btn-primary" style="display: inline-block; padding: 15px 30px; font-size: 16px;">
+                <i class="fas fa-plus"></i> 建立名片
+            </a>
+        </div>
+    </div>
+
+    <!-- 浮動按鈕 -->
+    <button class="fab" onclick="window.location.href='flex-card-builder-v2.html'" title="建立新名片">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <script>
+        const API_BASE = '/api';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPublishedCards();
+        });
+
+        // 載入已上架的名片
+        async function loadPublishedCards() {
+            try {
+                const response = await fetch(`${API_BASE}/cards/published`);
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    displayCards(result.cards);
+                    updateStats(result.cards);
+                } else {
+                    throw new Error(result.error || '載入名片失敗');
+                }
+            } catch (error) {
+                console.error('載入名片錯誤:', error);
+                showEmptyState();
+            }
+        }
+
+        // 顯示名片
+        function displayCards(cards) {
+            const loadingState = document.getElementById('loadingState');
+            const cardGallery = document.getElementById('cardGallery');
+            const emptyState = document.getElementById('emptyState');
+
+            loadingState.style.display = 'none';
+
+            if (cards.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            cardGallery.style.display = 'grid';
+            cardGallery.innerHTML = '';
+
+            cards.forEach(card => {
+                const cardElement = createCardElement(card);
+                cardGallery.appendChild(cardElement);
+            });
+        }
+
+        // 建立名片元素
+        function createCardElement(card) {
+            const customer = card.customer;
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card-item';
+
+            cardDiv.innerHTML = `
+                <div class="card-stats">
+                    <i class="fas fa-eye"></i> ${card.view_count}
+                </div>
+                
+                <div class="card-preview">
+                    <div class="card-header">
+                        <h3>${escapeHtml(customer.name)}</h3>
+                        ${customer.position ? `<p>${escapeHtml(customer.position)}</p>` : ''}
+                        ${customer.company ? `<p>${escapeHtml(customer.company)}</p>` : ''}
+                    </div>
+                    
+                    <div class="card-body">
+                        ${customer.phone ? `
+                        <div class="contact-item">
+                            <div class="contact-icon phone-icon">📞</div>
+                            <div class="contact-info">
+                                <h4>電話</h4>
+                                <p>${escapeHtml(customer.phone)}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${customer.email ? `
+                        <div class="contact-item">
+                            <div class="contact-icon email-icon">✉️</div>
+                            <div class="contact-info">
+                                <h4>電子郵件</h4>
+                                <p>${escapeHtml(customer.email)}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${customer.website ? `
+                        <div class="contact-item">
+                            <div class="contact-icon website-icon">🌐</div>
+                            <div class="contact-info">
+                                <h4>官方網站</h4>
+                                <p>${escapeHtml(customer.website)}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${customer.facebook_url ? `
+                        <div class="contact-item">
+                            <div class="contact-icon facebook-icon">📘</div>
+                            <div class="contact-info">
+                                <h4>Facebook</h4>
+                                <p>粉絲專頁</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${customer.address ? `
+                        <div class="contact-item">
+                            <div class="contact-icon map-icon">📍</div>
+                            <div class="contact-info">
+                                <h4>地址</h4>
+                                <p>${escapeHtml(customer.address)}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <div class="card-actions">
+                    <a href="${card.share_url}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i> 查看
+                    </a>
+                    <button class="btn btn-success" onclick="shareCard('${card.share_url}', '${escapeHtml(customer.name)}')">
+                        <i class="fas fa-share"></i> 分享
+                    </button>
+                    <button class="btn btn-info" onclick="copyCardUrl('${card.share_url}')">
+                        <i class="fas fa-copy"></i> 複製
+                    </button>
+                </div>
+            `;
+
+            return cardDiv;
+        }
+
+        // 更新統計資料
+        function updateStats(cards) {
+            const totalCards = cards.length;
+            const totalViews = cards.reduce((sum, card) => sum + card.view_count, 0);
+            
+            // 計算今日新增的名片
+            const today = new Date().toDateString();
+            const todayCards = cards.filter(card => {
+                const cardDate = new Date(card.created_at).toDateString();
+                return cardDate === today;
+            }).length;
+            
+            // 計算熱門名片（瀏覽次數 > 10）
+            const popularCards = cards.filter(card => card.view_count > 10).length;
+
+            // 動畫更新數字
+            animateNumber('totalCards', totalCards);
+            animateNumber('totalViews', totalViews);
+            animateNumber('todayCards', todayCards);
+            animateNumber('popularCards', popularCards);
+        }
+
+        // 數字動畫
+        function animateNumber(elementId, targetNumber) {
+            const element = document.getElementById(elementId);
+            const startNumber = 0;
+            const duration = 1000;
+            const startTime = Date.now();
+
+            function updateNumber() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentNumber = Math.floor(startNumber + (targetNumber - startNumber) * progress);
+                
+                element.textContent = currentNumber.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            updateNumber();
+        }
+
+        // 分享名片
+        function shareCard(url, name) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `${name}的電子名片`,
+                    text: '查看我的電子名片',
+                    url: url
+                });
+            } else {
+                copyCardUrl(url);
+            }
+        }
+
+        // 複製名片連結
+        function copyCardUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('名片連結已複製到剪貼簿', 'success');
+            }).catch(() => {
+                // 備用方法
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('名片連結已複製到剪貼簿', 'success');
+            });
+        }
+
+        // 顯示空狀態
+        function showEmptyState() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        // 顯示通知
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: transform 0.3s;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // HTML 轉義
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+
+    <script src="common-header.js"></script>
+</body>
+</html>
+

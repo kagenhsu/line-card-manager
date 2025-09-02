@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE電子名片上架系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-option.active {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+
+        .preview-section {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e1e5e9;
+        }
+
+        .preview-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .card-preview {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .contact-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .phone-icon { background: #27ae60; }
+        .email-icon { background: #3498db; }
+        .website-icon { background: #e67e22; }
+        .facebook-icon { background: #3b5998; }
+        .map-icon { background: #e74c3c; }
+
+        .contact-info h4 {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .contact-info p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .share-url-container {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .share-url-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #f8f9fa;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .qr-code-container img {
+            border: 2px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-id-card"></i> LINE電子名片上架系統</h1>
+            <p>設計您的專業電子名片，一鍵上架分享</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 表單區域 -->
+            <div class="form-section">
+                <h2><i class="fas fa-edit"></i> 名片設計</h2>
+                
+                <form id="cardForm">
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required placeholder="請輸入您的姓名">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="position">職位</label>
+                        <input type="text" id="position" name="position" placeholder="例如：業務經理">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">公司名稱</label>
+                        <input type="text" id="company" name="company" placeholder="請輸入公司名稱">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">電話</label>
+                            <input type="tel" id="phone" name="phone" placeholder="0912-345-678">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">電子郵件</label>
+                            <input type="email" id="email" name="email" placeholder="example@email.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website">官方網站</label>
+                        <input type="url" id="website" name="website" placeholder="https://www.example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="facebook_url">Facebook 粉絲專頁</label>
+                        <input type="url" id="facebook_url" name="facebook_url" placeholder="https://www.facebook.com/yourpage">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="google_map_url">Google 地圖連結</label>
+                        <input type="url" id="google_map_url" name="google_map_url" placeholder="https://maps.google.com/...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">地址</label>
+                        <textarea id="address" name="address" placeholder="請輸入完整地址"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="line_user_id">LINE User ID (用於發送)</label>
+                        <input type="text" id="line_user_id" name="line_user_id" placeholder="U1234567890abcdef...">
+                        <small style="color: #666; font-size: 12px;">此欄位用於LINE發送功能，不會顯示在名片上</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>名片主題色彩</label>
+                        <div class="color-picker">
+                            <div class="color-option active" data-color="linear-gradient(135deg, #667eea 0%, #764ba2 100%)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                            <div class="color-option" data-color="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                            <div class="color-option" data-color="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                            <div class="color-option" data-color="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                            <div class="color-option" data-color="linear-gradient(135deg, #fa709a 0%, #fee140 100%)" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-info btn-block" onclick="previewCard()">
+                            <i class="fas fa-eye"></i> 預覽名片
+                        </button>
+                        <button type="button" class="btn btn-success btn-block" onclick="publishCard()">
+                            <i class="fas fa-upload"></i> 上架名片
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 預覽區域 -->
+            <div class="preview-section">
+                <h2><i class="fas fa-mobile-alt"></i> 名片預覽</h2>
+                
+                <div class="card-preview" id="cardPreview">
+                    <div class="card-header" id="cardHeader">
+                        <h3 id="previewName">您的姓名</h3>
+                        <p id="previewPosition">職位</p>
+                        <p id="previewCompany">公司名稱</p>
+                    </div>
+                    
+                    <div class="card-body" id="cardBody">
+                        <div class="contact-item" id="phoneItem" style="display: none;">
+                            <div class="contact-icon phone-icon">📞</div>
+                            <div class="contact-info">
+                                <h4>電話</h4>
+                                <p id="previewPhone"></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" id="emailItem" style="display: none;">
+                            <div class="contact-icon email-icon">✉️</div>
+                            <div class="contact-info">
+                                <h4>電子郵件</h4>
+                                <p id="previewEmail"></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" id="websiteItem" style="display: none;">
+                            <div class="contact-icon website-icon">🌐</div>
+                            <div class="contact-info">
+                                <h4>官方網站</h4>
+                                <p id="previewWebsite"></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" id="facebookItem" style="display: none;">
+                            <div class="contact-icon facebook-icon">📘</div>
+                            <div class="contact-info">
+                                <h4>Facebook</h4>
+                                <p>粉絲專頁</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item" id="mapItem" style="display: none;">
+                            <div class="contact-icon map-icon">📍</div>
+                            <div class="contact-info">
+                                <h4>地址</h4>
+                                <p id="previewAddress"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" onclick="saveAsDraft()">
+                        <i class="fas fa-save"></i> 儲存草稿
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="loadDraft()">
+                        <i class="fas fa-folder-open"></i> 載入草稿
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享對話框 -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>名片已成功上架</h3>
+                <button class="modal-close" onclick="closeShareModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-info">
+                    <h4>分享連結</h4>
+                    <div class="share-url-container">
+                        <input type="text" id="shareUrl" readonly>
+                        <button class="btn btn-primary" onclick="copyShareUrl()">複製連結</button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="openCard()">
+                            <i class="fas fa-external-link-alt"></i> 預覽名片
+                        </button>
+                        <button class="btn btn-info" onclick="shareToLine()">
+                            <i class="fab fa-line"></i> 分享到LINE
+                        </button>
+                        <button class="btn btn-secondary" onclick="shareToFacebook()">
+                            <i class="fab fa-facebook"></i> 分享到Facebook
+                        </button>
+                    </div>
+                    
+                    <div class="qr-code-container">
+                        <h4>QR Code</h4>
+                        <div id="qrcode"></div>
+                        <small>掃描QR Code即可查看名片</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentShareUrl = '';
+        let selectedColor = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 綁定表單輸入事件
+            const formInputs = document.querySelectorAll('#cardForm input, #cardForm textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            // 綁定顏色選擇
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedColor = this.dataset.color;
+                    updatePreview();
+                });
+            });
+
+            // 初始預覽
+            updatePreview();
+            
+            // 載入草稿（如果存在）
+            loadDraft();
+        });
+
+        // 更新預覽
+        function updatePreview() {
+            const formData = new FormData(document.getElementById('cardForm'));
+            
+            // 更新名片標題
+            document.getElementById('previewName').textContent = formData.get('name') || '您的姓名';
+            document.getElementById('previewPosition').textContent = formData.get('position') || '';
+            document.getElementById('previewCompany').textContent = formData.get('company') || '';
+            
+            // 更新主題色彩
+            document.getElementById('cardHeader').style.background = selectedColor;
+            
+            // 更新聯絡資訊
+            updateContactItem('phoneItem', 'previewPhone', formData.get('phone'));
+            updateContactItem('emailItem', 'previewEmail', formData.get('email'));
+            updateContactItem('websiteItem', 'previewWebsite', formData.get('website'));
+            updateContactItem('facebookItem', null, formData.get('facebook_url'));
+            updateContactItem('mapItem', 'previewAddress', formData.get('address'));
+            
+            // 隱藏空的職位和公司欄位
+            document.getElementById('previewPosition').style.display = formData.get('position') ? 'block' : 'none';
+            document.getElementById('previewCompany').style.display = formData.get('company') ? 'block' : 'none';
+        }
+
+        // 更新聯絡項目
+        function updateContactItem(itemId, textId, value) {
+            const item = document.getElementById(itemId);
+            if (value && value.trim()) {
+                item.style.display = 'flex';
+                if (textId) {
+                    document.getElementById(textId).textContent = value;
+                }
+            } else {
+                item.style.display = 'none';
+            }
+        }
+
+        // 預覽名片
+        function previewCard() {
+            updatePreview();
+            showNotification('名片預覽已更新', 'success');
+        }
+
+        // 上架名片
+        async function publishCard() {
+            const formData = new FormData(document.getElementById('cardForm'));
+            
+            // 驗證必填欄位
+            if (!formData.get('name')) {
+                showNotification('請填寫姓名', 'error');
+                return;
+            }
+
+            try {
+                // 先建立或更新客戶資料
+                const customerData = {
+                    name: formData.get('name'),
+                    position: formData.get('position'),
+                    company: formData.get('company'),
+                    phone: formData.get('phone'),
+                    email: formData.get('email'),
+                    website: formData.get('website'),
+                    facebook_url: formData.get('facebook_url'),
+                    google_map_url: formData.get('google_map_url'),
+                    address: formData.get('address'),
+                    line_user_id: formData.get('line_user_id')
+                };
+
+                const customerResponse = await fetch(`${API_BASE}/customers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(customerData)
+                });
+
+                const customerResult = await customerResponse.json();
+                
+                if (!customerResponse.ok) {
+                    throw new Error(customerResult.error || '建立客戶資料失敗');
+                }
+
+                // 上架名片
+                const publishResponse = await fetch(`${API_BASE}/cards/publish`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customer_id: customerResult.customer.id })
+                });
+
+                const publishResult = await publishResponse.json();
+                
+                if (!publishResponse.ok) {
+                    throw new Error(publishResult.error || '上架名片失敗');
+                }
+
+                // 顯示分享對話框
+                currentShareUrl = publishResult.share_url;
+                document.getElementById('shareUrl').value = currentShareUrl;
+                generateQRCode(currentShareUrl);
+                document.getElementById('shareModal').classList.add('show');
+                
+                showNotification('名片已成功上架！', 'success');
+
+            } catch (error) {
+                console.error('上架名片錯誤:', error);
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // 儲存草稿
+        function saveAsDraft() {
+            const formData = new FormData(document.getElementById('cardForm'));
+            const draftData = {};
+            
+            for (let [key, value] of formData.entries()) {
+                draftData[key] = value;
+            }
+            
+            draftData.selectedColor = selectedColor;
+            
+            localStorage.setItem('cardDraft', JSON.stringify(draftData));
+            showNotification('草稿已儲存', 'success');
+        }
+
+        // 載入草稿
+        function loadDraft() {
+            const draftData = localStorage.getItem('cardDraft');
+            if (draftData) {
+                try {
+                    const data = JSON.parse(draftData);
+                    
+                    // 填入表單資料
+                    Object.keys(data).forEach(key => {
+                        if (key !== 'selectedColor') {
+                            const input = document.querySelector(`[name="${key}"]`);
+                            if (input) {
+                                input.value = data[key];
+                            }
+                        }
+                    });
+                    
+                    // 設定顏色
+                    if (data.selectedColor) {
+                        selectedColor = data.selectedColor;
+                        const colorOptions = document.querySelectorAll('.color-option');
+                        colorOptions.forEach(option => {
+                            option.classList.remove('active');
+                            if (option.dataset.color === selectedColor) {
+                                option.classList.add('active');
+                            }
+                        });
+                    }
+                    
+                    updatePreview();
+                    showNotification('草稿已載入', 'success');
+                } catch (error) {
+                    console.error('載入草稿失敗:', error);
+                }
+            }
+        }
+
+        // 複製分享連結
+        function copyShareUrl() {
+            const shareUrlInput = document.getElementById('shareUrl');
+            shareUrlInput.select();
+            shareUrlInput.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+                showNotification('分享連結已複製到剪貼簿', 'success');
+            }).catch(() => {
+                document.execCommand('copy');
+                showNotification('分享連結已複製到剪貼簿', 'success');
+            });
+        }
+
+        // 開啟名片頁面
+        function openCard() {
+            window.open(currentShareUrl, '_blank');
+        }
+
+        // 分享到LINE
+        function shareToLine() {
+            const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(currentShareUrl)}`;
+            window.open(lineUrl, '_blank');
+        }
+
+        // 分享到Facebook
+        function shareToFacebook() {
+            const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
+            window.open(fbUrl, '_blank');
+        }
+
+        // 生成QR Code
+        function generateQRCode(url) {
+            const qrContainer = document.getElementById('qrcode');
+            const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(url)}`;
+            qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR Code" style="max-width: 200px;">`;
+        }
+
+        // 關閉分享對話框
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
+        }
+
+        // 顯示通知
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // 點擊背景關閉對話框
+        document.getElementById('shareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeShareModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
